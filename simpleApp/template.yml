@@ -28,8 +28,8 @@ Conditions:
 Globals:
   Function:
     Runtime: nodejs12.x
-    MemorySize: 256
-    Timeout: 100
+    MemorySize: 128
+    Timeout: 5
     Tracing: Active
     CodeUri: ./functions
 
@@ -67,6 +67,117 @@ Resources:
       AutoPublishAlias: live
       DeploymentPreference:
         Type: !If [IsProd, Linear10PercentEvery1Minute, AllAtOnce]
+
+  HelloWorld:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: helloWorld.handler
+      CodeUri: ./deployment-traffic      
+      AutoPublishAlias: live
+      Description: 'Lambda function for CD Demo'
+      DeploymentPreference:
+          Type: Linear10PercentEvery1Minute
+          Alarms:
+            - !Ref AliasErrorMetricGreaterThanZeroAlarm
+            - !Ref LatestVersionErrorMetricGreaterThanZeroAlarm
+          Hooks:
+            PreTraffic: !Ref PreTrafficHook
+            PostTraffic: !Ref PostTrafficHook
+      Events:
+        HelloWorldAPI:
+          Type: Api
+          Properties:
+            Path: /
+            Method: get
+          
+  AliasErrorMetricGreaterThanZeroAlarm:
+    Type: "AWS::CloudWatch::Alarm"
+    Properties:
+      AlarmDescription: Lambda Function Error > 0
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: Resource
+          Value: !Sub "${HelloWorld}:live"
+        - Name: FunctionName
+          Value: !Ref HelloWorld
+      EvaluationPeriods: 2
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+
+  LatestVersionErrorMetricGreaterThanZeroAlarm:
+    Type: "AWS::CloudWatch::Alarm"
+    Properties:
+      AlarmDescription: Lambda Function Error > 0
+      ComparisonOperator: GreaterThanThreshold
+      Dimensions:
+        - Name: Resource
+          Value: !Sub "${HelloWorld}:live"
+        - Name: FunctionName
+          Value: !Ref HelloWorld
+        - Name: ExecutedVersion
+          Value: !GetAtt HelloWorld.Version.Version
+      EvaluationPeriods: 2
+      MetricName: Errors
+      Namespace: AWS/Lambda
+      Period: 60
+      Statistic: Sum
+      Threshold: 0
+
+
+  PreTrafficHook:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: preTrafficHook.handler      
+      CodeUri: ./deployment-traffic
+      FunctionName: 'CodeDeployHook_PreTrafficHook'
+      Policies:
+        - Version: "2012-10-17"
+          Statement: 
+          - Effect: "Allow"
+            Action: 
+              - "codedeploy:PutLifecycleEventHookExecutionStatus"
+            Resource:
+              !Sub 'arn:aws:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${ServerlessDeploymentApplication}/*'
+        - Version: "2012-10-17"
+          Statement: 
+          - Effect: "Allow"
+            Action: 
+              - "lambda:InvokeFunction"
+            Resource: !Ref HelloWorld.Version
+      DeploymentPreference:
+        Enabled: false
+      Environment:
+        Variables:
+          NewVersion: !Ref HelloWorld.Version
+
+  PostTrafficHook:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: postTrafficHook.handler      
+      CodeUri: ./deployment-traffic
+      FunctionName: 'CodeDeployHook_PostTrafficHook'
+      Policies:
+        - Version: "2012-10-17"
+          Statement: 
+          - Effect: "Allow"
+            Action: 
+              - "codedeploy:PutLifecycleEventHookExecutionStatus"
+            Resource:
+              !Sub 'arn:aws:codedeploy:${AWS::Region}:${AWS::AccountId}:deploymentgroup:${ServerlessDeploymentApplication}/*'
+        - Version: "2012-10-17"
+          Statement: 
+          - Effect: "Allow"
+            Action: 
+              - "lambda:InvokeFunction"
+            Resource: !Ref HelloWorld.Version
+      DeploymentPreference:
+        Enabled: false
+      Environment:
+        Variables:
+          NewVersion: !Ref HelloWorld.Version
 
   MyDynamoDBTable:
     Type: "AWS::DynamoDB::Table"
