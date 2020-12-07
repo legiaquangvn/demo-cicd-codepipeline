@@ -72,7 +72,6 @@ Resources:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: helloWorld.handler
-      CodeUri: ./functions/deployment-traffic
       AutoPublishAlias: live
       Description: 'Lambda function for CD Demo'
       DeploymentPreference:
@@ -131,7 +130,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: preTrafficHook.handler      
-      CodeUri: ./functions/deployment-traffic
       FunctionName: 'CodeDeployHook_PreTrafficHook'
       Policies:
         - Version: "2012-10-17"
@@ -157,7 +155,6 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: postTrafficHook.handler      
-      CodeUri: ./functions/deployment-traffic
       FunctionName: 'CodeDeployHook_PostTrafficHook'
       Policies:
         - Version: "2012-10-17"
