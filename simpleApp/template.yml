@@ -60,14 +60,6 @@ Resources:
             Path: /simple
             Method: GET
 
-  MySafeDeployedFunction:
-    Type: "AWS::Serverless::Function"
-    Properties:
-      Handler: mySafeDeployedFunction.handler
-      AutoPublishAlias: live
-      DeploymentPreference:
-        Type: !If [IsProd, Linear10PercentEvery1Minute, AllAtOnce]
-
   HelloWorld:
     Type: 'AWS::Serverless::Function'
     Properties:
@@ -124,7 +116,6 @@ Resources:
       Period: 60
       Statistic: Sum
       Threshold: 0
-
 
   PreTrafficHook:
     Type: AWS::Serverless::Function
