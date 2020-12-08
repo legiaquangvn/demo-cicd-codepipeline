@@ -29,11 +29,6 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /service/demo-cicd-pipeline/github/user
 
-  IntegrationTestLambda:
-    Description: Name of the lambda function that will be used for running integration tests
-    Type: AWS::SSM::Parameter::Value<String>
-    Default: /service/demo-cicd-pipeline/lambda/name
-
 Resources:
   ######   #######  ##     ## ########   ######  ########
   ##    ## ##     ## ##     ## ##     ## ##    ## ##
@@ -141,7 +136,7 @@ Resources:
                 - Name: SourceCodeAsZip
               OutputArtifacts:
                 - Name: BuildArtifactAsZip
-        - Name: Stage
+        - Name: Prod
           Actions:
             - Name: DeploymentApproval
               ActionTypeId:
@@ -160,13 +155,13 @@ Resources:
                 # More info on Possible Values for Cloudformation: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/continuous-delivery-codepipeline-action-reference.html#w2ab2c13c13b9
                 ActionMode: CHANGE_SET_REPLACE
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
-                StackName: demo-cicd-codepipeline-Stage
+                StackName: demo-cicd-codepipeline-Prod
                 ChangeSetName: demo-cicd-codepipeline-ChangeSet-Stage
                 TemplatePath: BuildArtifactAsZip::packaged.yml
                 Capabilities: CAPABILITY_IAM
                 ParameterOverrides: |
                   {
-                    "MyEnvironment" : "staging"
+                    "MyEnvironment" : "prod"
                   }
               InputArtifacts:
                 - Name: BuildArtifactAsZip
@@ -180,7 +175,7 @@ Resources:
                 Version: "1"
               Configuration:
                 ActionMode: CHANGE_SET_EXECUTE
-                StackName: demo-cicd-codepipeline-Stage
+                StackName: demo-cicd-codepipeline-Prod
                 ChangeSetName: demo-cicd-codepipeline-ChangeSet-Stage
               RunOrder: 3
 
