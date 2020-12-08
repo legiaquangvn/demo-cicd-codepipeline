@@ -1,5 +1,7 @@
 simpleApp/.aws-sam/
 simpleApp/node_modules/
+simpleApp/package-lock.json
+package-lock.json
 .vscode/
 .history
 simpleApp/.aws-sam/build/
