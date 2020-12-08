@@ -88,7 +88,6 @@ Before we create this pipeline through Cloudformation you may want to change a c
                 RunOrder: 1
 ```
 
-</details>
 
 Run the following AWS CLI command to create your first pipeline for your SAM based Serverless App:
 

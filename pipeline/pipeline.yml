@@ -29,6 +29,16 @@ Parameters:
     Type: AWS::SSM::Parameter::Value<String>
     Default: /service/demo-cicd-pipeline/github/user
 
+  BuildComputeType:
+    Type: String
+    Default: "BUILD_GENERAL1_SMALL"
+    Description: The build compute type to use for building the app
+
+  SiteBucketName:
+    Type: String
+    Description: Name of bucket to create to host the website
+    Default: "cicd-static-website-v02"    
+
 Resources:
   ######   #######  ##     ## ########   ######  ########
   ##    ## ##     ## ##     ## ##     ## ##    ## ##
@@ -53,6 +63,15 @@ Resources:
           Value: demo-cicd-codepipeline
     DeletionPolicy: Retain
 
+  SiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName: !Ref SiteBucketName
+      WebsiteConfiguration:
+        IndexDocument: index.html
+
+
   ########  ##     ## #### ##       ########
   ##     ## ##     ##  ##  ##       ##     ##
   ##     ## ##     ##  ##  ##       ##     ##
@@ -65,7 +84,7 @@ Resources:
     Type: AWS::CodeBuild::Project
     Properties:
       Name: demo-cicd-codepipeline
-      Description: Build project for the demo-cicd-codepipeline
+      Description: Build lambda project
       Artifacts:
         Type: CODEPIPELINE
       Environment:
@@ -87,6 +106,37 @@ Resources:
           Value: !Ref AWS::StackName
         - Key: "Project"
           Value: demo-cicd-codepipeline
+
+  CodeBuildDeploySite:
+      Type: AWS::CodeBuild::Project
+      # DependsOn: CodeBuildRole
+      Properties:
+        Name: !Sub ${AWS::StackName}-DeploySite
+        Description: Deploy site to S3
+        # ServiceRole: !GetAtt CodeBuildRole.Arn
+        Artifacts:
+          Type: CODEPIPELINE
+        Environment:
+          Type: LINUX_CONTAINER
+          ComputeType: !Ref BuildComputeType
+          Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        Source:
+          Type: CODEPIPELINE
+          BuildSpec: !Sub |
+            version: 0.2
+            phases:
+              post_build:
+                commands:
+                  - aws s3 sync "website" "s3://${SiteBucket}/" --delete --acl "public-read"
+                  
+            artifacts:
+              type: zip
+              files:
+                - ./index.html
+        TimeoutInMinutes: 10
+        # aws s3 sync "website" "s3://${SiteBucket}/" --delete --acl "public-read"
+        # aws s3 sync "website" "s3://cicd-static-website" --delete --acl "public-read"
+
 
   ########  #### ########  ######## ##       #### ##    ## ########
   ##     ##  ##  ##     ## ##       ##        ##  ###   ## ##
@@ -122,7 +172,22 @@ Resources:
               OutputArtifacts:
                 - Name: SourceCodeAsZip
               RunOrder: 1
-        - Name: Build
+        - Name: Deploy Site
+          Actions:
+          - Name: Artifact
+            ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Version: '1'
+              Provider: CodeBuild
+            InputArtifacts:
+            - Name: SourceCodeAsZip 
+            OutputArtifacts:
+            - Name: DeploymentArtifacts
+            Configuration:
+              ProjectName: !Ref CodeBuildDeploySite
+            RunOrder: 1              
+        - Name: Build Lambda
           Actions:
             - Name: CodeBuild
               ActionTypeId:

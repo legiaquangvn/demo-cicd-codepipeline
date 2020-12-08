@@ -30,3 +30,36 @@ This project contains the buildspec and also it has configuration for safe deplo
 ## See the linear deployment
 - aws console > Services > CodePipeline > Left menu > Deploy > Deployments > Click the first one from the list
 - 
+
+## Refs:
+
+- https://www.youtube.com/watch?v=bnD_6lasWHs&t=6s
+    - https://github.com/mavi888/demo-cicd-codepipeline
+
+- https://www.youtube.com/watch?v=0o3urdBeoII&t=54s
+    - https://github.com/aws-samples/cookiecutter-aws-sam-pipeline
+
+- Deployment strategies:
+    - https://www.youtube.com/watch?v=Wd-xhOKkMcU
+        - https://github.com/austinloveless/LambdaCI-CDDemo
+
+    - https://www.youtube.com/watch?v=r2BBoBnH3R0
+    - https://www.youtube.com/watch?v=GqDrPqrCZSo
+    - https://www.youtube.com/watch?v=RE4r_6edaXc
+
+    
+- Dynamodb:
+    - https://github.com/austinloveless/AWSDenver-serverless/blob/master/src/lib/dynamodb.js
+
+- code-pipeline
+    - https://github.com/stelligent/devops-essentials
+
+- cdk:
+    - static website: 
+        - https://sbstjn.com/blog/deploy-react-cra-with-cdk-codepipeline-and-codebuild/
+        - https://blogs.tensult.com/2020/01/07/build-codepipeline-for-a-static-website/
+        - https://medium.com/@greeshu.renu/host-gatsby-js-site-on-amazon-s3-with-aws-codepipeline-675117686b9b
+        - https://dzone.com/articles/continuous-delivery-to-s3-via-codepipeline-and-cod
+            - https://github.com/stelligent/devops-essentials/blob/master/samples/static/pipeline.yml
+        
+

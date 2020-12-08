@@ -1,10 +1,12 @@
-simpleApp/.aws-sam/
-simpleApp/node_modules/
-simpleApp/package-lock.json
 package-lock.json
 .vscode/
 .history
+.DS_Store
+simpleApp/.aws-sam/
+simpleApp/node_modules/
+simpleApp/package-lock.json
 simpleApp/.aws-sam/build/
 simpleApp/samconfig.toml
+simpleApp/.DS_Store
 testingApp/samconfig.toml
 integration-test-lambda/samconfig.toml
