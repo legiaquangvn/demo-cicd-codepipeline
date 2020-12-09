@@ -77,6 +77,24 @@ Resources:
             RestApiId: !Ref MyApi
             Path: /updateCount
             Method: POST
+
+  GetCountFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: getCountFunction.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MyDynamoDBTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref MyDynamoDBTable
+      Events:
+        MySimpleFunctionAPI:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /getCount
+            Method: GET
   ProcessDynamoDBStream:
     Type: AWS::Serverless::Function
     Properties:
@@ -86,47 +104,12 @@ Resources:
         - AmazonDynamoDBFullAccess
         - AmazonS3FullAccess
         - AWSLambdaDynamoDBExecutionRole
-
-        # - DynamoDBStreamReadPolicy:
-        #     TableName: !Ref MyDynamoDBTable
-        #     StreamName: '*'
-        # - DynamoDBCrudPolicy:
-        #     TableName: !Ref MyDynamoDBTable
-        # - AWSLambdaDynamoDBExecutionRole
-
-        # - PolicyName: AWSLambdaDynamoDBExecutionMyRole
-        #   PolicyDocument:
-        #     Version: '2012-10-17'
-        #     Statement:
-        #     - Effect: Allow
-        #       Action: 
-        #         - "dynamodb:DescribeStream"
-        #         - "dynamodb:GetRecords"
-        #         - "dynamodb:GetShardIterator"
-        #         - "logs:CreateLogGroup"
-        #         - "logs:CreateLogStream"
-        #         - "logs:PutLogEvents"              
-        #       Resource: "*"
-
-        # - AWSLambdaBasicExecutionRole
-        # - AmazonDynamoDBFullAccess
-        # - AmazonS3FullAccess
-        # - AWSLambdaDynamoDBExecutionRole
-        # - AWSLambdaDynamoDBExecutionRole
-        # - DynamoDBStreamReadPolicy
-        #     TableName: !Ref MyDynamoDBTable
-        #     StreamName: '*'
-                # "dynamodb:DescribeStream",
-                # "dynamodb:GetRecords",
-                # "dynamodb:GetShardIterator",
-                # "dynamodb:ListStreams"
       Events:
         Stream:
           Type: DynamoDB
           Properties:
             Stream: !GetAtt MyDynamoDBTable.StreamArn
             BatchSize: 100
-            # StartingPosition: TRIM_HORIZON
             StartingPosition: LATEST
   HelloWorld:
     Type: 'AWS::Serverless::Function'
@@ -250,9 +233,7 @@ Resources:
           KeyType: RANGE
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      BillingMode: PAY_PER_REQUEST        
       TableName: !FindInMap [ResourcesName, !Ref MyEnvironment, tableName]
         
 Outputs:

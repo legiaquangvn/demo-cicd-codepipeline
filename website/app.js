@@ -14,17 +14,18 @@ var DESIRED_SAM_COUNT = 1;
 var CURRENT_SAM_COUNT = 1;
 var MAX_SAM_CHANGE = 10;
 var LAST_CHANGE_TIME = Date.now();
-var GET_SAM_COUNT_URL = 'https://68eks9w83m.execute-api.us-east-1.amazonaws.com/Prod/sam';
+var GET_SAM_COUNT_URL = 'https://68eks9w83m.execute-api.us-east-1.amazonaws.com/Prod/getCount';
 var TIME_BETWEEN_COUNT_UPDATE_MS = 4000;
 
 function preload() {
-    game.load.spritesheet('spinner', 'squirrel.png', 64, 64);
+    game.load.spritesheet('spinner', 'ssa_logo.png', 64, 64);
     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 }
 
 function create() {
     game.stage.disableVisibilityChange = true;
-    game.stage.backgroundColor = '#967da7';
+    game.stage.backgroundColor = '#99ccff'; // '#967da7'
+    
     sprites = game.add.physicsGroup(Phaser.Physics.ARCADE);
     createSprites(DESIRED_SAM_COUNT);
 }
