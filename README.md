@@ -4,6 +4,20 @@ In this repository you will find a deployment pipeline and 2 AWS SAM demo projec
 
 If you want to setup your pipeline you can read the [pipeline documentation](/pipeline/Pipeline-instructions.md)
 
+## Demo info:
+- lambda functions:
+    - list: https://console.aws.amazon.com/lambda/home?region=us-east-1#/functions
+    - execute
+        - https://65t5xg1916.execute-api.us-east-1.amazonaws.com/prod/simple
+        - https://lhrcf4wdy9.execute-api.us-east-1.amazonaws.com/Prod/        
+
+    - deployment:
+        - https://console.aws.amazon.com/codesuite/codedeploy/deployments/d-RY5BLQB18?region=us-east-1
+    
+    - dynamodb:
+        - https://console.aws.amazon.com/dynamodb/home?region=us-east-1#tables:
+
+
 ## Test Lambda function
 
 In the project 'integration-test-lambda' you will find a sample of a lambda function that you need to run integration tests in the pipeline.
@@ -50,6 +64,9 @@ This project contains the buildspec and also it has configuration for safe deplo
     
 - Dynamodb:
     - https://github.com/austinloveless/AWSDenver-serverless/blob/master/src/lib/dynamodb.js
+    - https://github.com/darpanpathak/AWS-SAM-Lambda-dynamoDB
+    - https://www.youtube.com/watch?v=-ALooNnddOE
+        - https://github.com/mavi888/sam-test-basic-project
 
 - code-pipeline
     - https://github.com/stelligent/devops-essentials

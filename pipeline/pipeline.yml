@@ -40,13 +40,13 @@ Parameters:
     Default: "cicd-static-website-v02"    
 
 Resources:
-  ######   #######  ##     ## ########   ######  ########
-  ##    ## ##     ## ##     ## ##     ## ##    ## ##
-  ##       ##     ## ##     ## ##     ## ##       ##
-  ######  ##     ## ##     ## ########  ##       ######
-  ## ##     ## ##     ## ##   ##   ##       ##
-  ##    ## ##     ## ##     ## ##    ##  ##    ## ##
-  ######   #######   #######  ##     ##  ######  ########
+   ######   #######  ##     ## ########   ######  ######## 
+  ##    ## ##     ## ##     ## ##     ## ##    ## ##       
+  ##       ##     ## ##     ## ##     ## ##       ##       
+   ######  ##     ## ##     ## ########  ##       ######   
+        ## ##     ## ##     ## ##   ##   ##       ##       
+  ##    ## ##     ## ##     ## ##    ##  ##    ## ##       
+   ######   #######   #######  ##     ##  ######  ########   
 
   # CodeBuild project and resources (S3 Bucket for build artifacts, Role, Project)
   BuildArtifactsBucket:
@@ -109,11 +109,9 @@ Resources:
 
   CodeBuildDeploySite:
       Type: AWS::CodeBuild::Project
-      # DependsOn: CodeBuildRole
       Properties:
         Name: !Sub ${AWS::StackName}-DeploySite
         Description: Deploy site to S3
-        # ServiceRole: !GetAtt CodeBuildRole.Arn
         Artifacts:
           Type: CODEPIPELINE
         Environment:
@@ -245,13 +243,13 @@ Resources:
               RunOrder: 3
 
 
-  ####    ###    ##     ##
-  ##    ## ##   ###   ###
-  ##   ##   ##  #### ####
-  ##  ##     ## ## ### ##
-  ##  ######### ##     ##
-  ##  ##     ## ##     ##
-  #### ##     ## ##     ##
+  ####    ###    ##     ## 
+   ##    ## ##   ###   ### 
+   ##   ##   ##  #### #### 
+   ##  ##     ## ## ### ## 
+   ##  ######### ##     ## 
+   ##  ##     ## ##     ## 
+  #### ##     ## ##     ## 
 
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
