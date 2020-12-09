@@ -4,7 +4,14 @@ const {getCount} = require('./db/dynamodb');
 
 exports.handler = async (event, context)  => {
 	
-	const count = parseInt(await getCount());
+    let count = 1;
+    try {
+        count = parseInt(await getCount());
+    } catch (e) {
+        // no count record in the database
+        count = 1;
+    }
+
 	console.log('getCount:', count);
 	return sendResponse(200, count, context);
 };
