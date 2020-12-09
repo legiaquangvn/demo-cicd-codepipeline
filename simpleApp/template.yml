@@ -243,8 +243,6 @@ Resources:
           AttributeType: S
         - AttributeName: SortKey
           AttributeType: S
-        - AttributeName: WorkerID
-          AttributeType: S
       KeySchema:
         - AttributeName: PartitionKey
           KeyType: HASH
