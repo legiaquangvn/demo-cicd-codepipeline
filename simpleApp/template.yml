@@ -82,14 +82,37 @@ Resources:
     Properties:
       Handler: processDynamoDbStream.handler
       Policies:
+        - DynamoDBStreamReadPolicy:
+            TableName: !Ref MyDynamoDBTable
+            StreamName: '*'
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MyDynamoDBTable
+        - PolicyName: AWSLambdaDynamoDBExecutionRole
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action: 
+                - "dynamodb:DescribeStream"
+                - "dynamodb:GetRecords"
+                - "dynamodb:GetShardIterator"
+                - "logs:CreateLogGroup"
+                - "logs:CreateLogStream"
+                - "logs:PutLogEvents"              
+              Resource: "*"
+
         # - AWSLambdaBasicExecutionRole
         # - AmazonDynamoDBFullAccess
         # - AmazonS3FullAccess
         # - AWSLambdaDynamoDBExecutionRole
-        - AWSLambdaDynamoDBExecutionRole
-        - DynamoDBStreamReadPolicy
-            TableName: !Ref MyDynamoDBTable
-            StreamName: '*'
+        # - AWSLambdaDynamoDBExecutionRole
+        # - DynamoDBStreamReadPolicy
+        #     TableName: !Ref MyDynamoDBTable
+        #     StreamName: '*'
+                # "dynamodb:DescribeStream",
+                # "dynamodb:GetRecords",
+                # "dynamodb:GetShardIterator",
+                # "dynamodb:ListStreams"
       Events:
         Stream:
           Type: DynamoDB

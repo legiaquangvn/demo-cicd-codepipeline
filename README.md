@@ -67,6 +67,8 @@ This project contains the buildspec and also it has configuration for safe deplo
     - https://github.com/darpanpathak/AWS-SAM-Lambda-dynamoDB
     - https://www.youtube.com/watch?v=-ALooNnddOE
         - https://github.com/mavi888/sam-test-basic-project
+    - stream & lambda:
+        - https://github.com/aws/aws-sam-cli/issues/974
 
 - code-pipeline
     - https://github.com/stelligent/devops-essentials
@@ -82,5 +84,5 @@ This project contains the buildspec and also it has configuration for safe deplo
 
 - aws sam policy template:
     - https://stackoverflow.com/questions/48985893/not-able-to-add-policies-in-sam-template
-    
+
 
