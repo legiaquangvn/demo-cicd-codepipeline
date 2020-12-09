@@ -180,8 +180,7 @@ Resources:
           NewVersion: !Ref HelloWorld.Version
 
   MyDynamoDBTable:
-    Type: "AWS::DynamoDB::Table"
-    TableName: !FindInMap [ResourcesName, !Ref MyEnvironment, tableName]
+    Type: "AWS::DynamoDB::Table"    
     BillingMode: PAY_PER_REQUEST
     Properties:
       AttributeDefinitions:
@@ -201,8 +200,8 @@ Resources:
         WriteCapacityUnits: 1
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
+      TableName: !FindInMap [ResourcesName, !Ref MyEnvironment, tableName]
         
-
 Outputs:
   Region:
     Description: "Region"

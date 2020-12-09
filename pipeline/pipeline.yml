@@ -118,6 +118,7 @@ Resources:
           Type: LINUX_CONTAINER
           ComputeType: !Ref BuildComputeType
           Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        ServiceRole: !GetAtt CodeBuildServiceRole.Arn  
         Source:
           Type: CODEPIPELINE
           BuildSpec: !Sub |
@@ -125,13 +126,14 @@ Resources:
             phases:
               post_build:
                 commands:
-                  - aws s3 sync "website" "s3://${SiteBucket}/" --delete --acl "public-read"
+                  - aws s3 ls s3://${SiteBucket}
+                  - aws s3 sync website s3://${SiteBucket}/ --delete --acl public-read
                   
             artifacts:
               type: zip
-              files:
-                - ./index.html
-        TimeoutInMinutes: 10
+              # files:
+              #   - index.html
+        TimeoutInMinutes: 5
         # aws s3 sync "website" "s3://${SiteBucket}/" --delete --acl "public-read"
         # aws s3 sync "website" "s3://cicd-static-website" --delete --acl "public-read"
 
@@ -170,7 +172,7 @@ Resources:
               OutputArtifacts:
                 - Name: SourceCodeAsZip
               RunOrder: 1
-        - Name: Deploy Site
+        - Name: DeploySite
           Actions:
           - Name: Artifact
             ActionTypeId:
@@ -184,8 +186,8 @@ Resources:
             - Name: DeploymentArtifacts
             Configuration:
               ProjectName: !Ref CodeBuildDeploySite
-            RunOrder: 1              
-        - Name: Build Lambda
+            RunOrder: 1
+        - Name: BuildLambda
           Actions:
             - Name: CodeBuild
               ActionTypeId:
@@ -219,7 +221,7 @@ Resources:
                 ActionMode: CHANGE_SET_REPLACE
                 RoleArn: !GetAtt CloudFormationExecutionRole.Arn
                 StackName: demo-cicd-codepipeline-Prod
-                ChangeSetName: demo-cicd-codepipeline-ChangeSet-Stage
+                ChangeSetName: demo-cicd-codepipeline-ChangeSet-Prod
                 TemplatePath: BuildArtifactAsZip::packaged.yml
                 Capabilities: CAPABILITY_IAM
                 ParameterOverrides: |
@@ -239,7 +241,7 @@ Resources:
               Configuration:
                 ActionMode: CHANGE_SET_EXECUTE
                 StackName: demo-cicd-codepipeline-Prod
-                ChangeSetName: demo-cicd-codepipeline-ChangeSet-Stage
+                ChangeSetName: demo-cicd-codepipeline-ChangeSet-Prod
               RunOrder: 3
 
 
@@ -274,9 +276,11 @@ Resources:
                   - "logs:CreateLogGroup"
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
-                Resource:
+                Resource:                  
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/demo-cicd-codepipeline"
                   - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/demo-cicd-codepipeline:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/demo-cicd-pipeline-DeploySite"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/demo-cicd-pipeline-DeploySite:*"                  
         - PolicyName: CodeBuildArtifactsBucket
           PolicyDocument:
             Version: "2012-10-17"
@@ -288,6 +292,15 @@ Resources:
                   - "s3:PutObject"
                 Resource:
                   - !Sub "arn:aws:s3:::${BuildArtifactsBucket}/*"
+        - PolicyName: CodeBuildSiteBucket
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "s3:*"
+                Resource:
+                  - !Sub "arn:aws:s3:::${SiteBucket}"
+                  - !Sub "arn:aws:s3:::${SiteBucket}/*"
         - PolicyName: CodeBuildParameterStore
           PolicyDocument:
             Version: "2012-10-17"
@@ -341,7 +354,28 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: "s3:*"
-                Resource: !Sub "arn:aws:s3:::${BuildArtifactsBucket}/*"
+                Resource: 
+                  - !Sub "arn:aws:s3:::${BuildArtifactsBucket}/*"
+        - PolicyName: CodePipelineSiteBucket
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: "s3:*"
+                Resource:
+                  - !Sub "arn:aws:s3:::${SiteBucket}/*"
+                  - !Sub "arn:aws:s3:::${SiteBucket}"
+        - PolicyName: CodePipelineCodeBuildLogs
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                Resource:
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/codebuild/demo-cicd-codepipeline-*"
         - PolicyName: CodePipelineCodeBuildAndCloudformationAccess
           PolicyDocument:
             Version: "2012-10-17"
@@ -352,6 +386,7 @@ Resources:
                   - "codebuild:BatchGetBuilds"
                 Resource:
                   - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/${CodeBuildProject}"
+                  - !Sub "arn:aws:codebuild:${AWS::Region}:${AWS::AccountId}:project/${CodeBuildDeploySite}"                  
               - Effect: Allow
                 Action:
                   - "cloudformation:CreateStack"

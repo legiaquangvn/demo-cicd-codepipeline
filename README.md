@@ -78,5 +78,5 @@ This project contains the buildspec and also it has configuration for safe deplo
         - https://medium.com/@greeshu.renu/host-gatsby-js-site-on-amazon-s3-with-aws-codepipeline-675117686b9b
         - https://dzone.com/articles/continuous-delivery-to-s3-via-codepipeline-and-cod
             - https://github.com/stelligent/devops-essentials/blob/master/samples/static/pipeline.yml
-        
+        - https://medium.com/@kyle.galbraith/how-to-continuously-deploy-a-static-website-in-style-using-github-and-aws-3df7ecb58d9c
 
