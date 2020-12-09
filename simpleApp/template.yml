@@ -59,6 +59,25 @@ Resources:
             RestApiId: !Ref MyApi
             Path: /request
             Method: GET
+
+  UpdateCountFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: updateCountFunction.handler
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref MyDynamoDBTable
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref MyDynamoDBTable
+      Events:
+        MySimpleFunctionAPI:
+          Type: Api
+          Properties:
+            RestApiId: !Ref MyApi
+            Path: /updateCount
+            Method: POST
+
   ProcessDynamoDBStream:
     Type: AWS::Serverless::Function
     Properties:
@@ -68,7 +87,7 @@ Resources:
         Stream:
           Type: DynamoDB
           Properties:
-            Stream: !GetAtt DynamoDBTable.StreamArn
+            Stream: !GetAtt MyDynamoDBTable.StreamArn
             BatchSize: 100
             # StartingPosition: TRIM_HORIZON
             StartingPosition: LATEST
@@ -90,7 +109,7 @@ Resources:
         HelloWorldAPI:
           Type: Api
           Properties:
-            Path: /
+            Path: /helloworld
             Method: get
           
   AliasErrorMetricGreaterThanZeroAlarm:
