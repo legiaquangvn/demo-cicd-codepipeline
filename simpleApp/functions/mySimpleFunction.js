@@ -1,11 +1,11 @@
 'use strict';
 
-const {saveItem} = require('./db/dynamodb');
+const {saveRequest} = require('./db/dynamodb');
 
 exports.handler = async (event, context)  => {
 	
-	const currentTimeInMs = Date.now();
-	await saveItem('request', currentTimeInMs);
+	const currentTimeInMs = Date.now() + '';
+	await saveRequest('Request', currentTimeInMs);
 	
 	const currentDate = new Date().toUTCString();
 	

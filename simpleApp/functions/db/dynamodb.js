@@ -4,7 +4,7 @@ const {DynamoDB} = require('aws-sdk');
 const db = new DynamoDB.DocumentClient();
 const TableName = process.env.TABLE_NAME;
 
-const saveItem = async (pk, sk) => {
+const saveRequest = async (pk, sk) => {
     const item = {
         PartitionKey: pk,
         SortKey: sk
@@ -18,19 +18,40 @@ const saveItem = async (pk, sk) => {
     console.log('saved: ', item);
 }
 
+const saveCount = async (count) => {
+    const item = {
+        PartitionKey: 'Count',
+        SortKey: 'Current',
+        Count: count
+    };
 
-// const getCount = async (id, count) => {
-//     const item = {
-//         itemId: id,
-//         count: count
-//     };
+    await db.put({
+        TableName,
+        Item: item
+    }).promise();
 
-//     await db.put({
-//         TableName,
-//         Item: item
-//     }).promise();
+    console.log('saved: ', item);
+}
 
-//     console.log('saved: ', item);
-// }
+const getCount = () => {
+	const params = {
+		Key: {
+            PartitionKey: 'Count',
+            SortKey: 'Current'    
+		},
+		TableName
+	};
 
-module.exports = { saveItem };
+	return db.get(params)
+		.promise()
+		.then((result) => {
+            console.log('getCount result:', result);
+            console.log('getCount:', result.Item.Count);
+			return result.Item.Count;
+		}, (error) => {
+			return error;
+		});
+};
+
+
+module.exports = { saveRequest, saveCount, getCount };

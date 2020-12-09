@@ -1,12 +1,11 @@
 'use strict';
 
-const {saveItem} = require('./db/dynamodb');
+const {getCount} = require('./db/dynamodb');
 
 exports.handler = async (event, context)  => {
-
-	const count = 1;
-	// const count = await getCount();
 	
+	const count = parseInt(await getCount());
+	console.log('getCount:', count);
 	return sendResponse(200, count, context);
 };
 
