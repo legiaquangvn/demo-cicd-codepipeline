@@ -245,7 +245,9 @@ Resources:
           KeyType: RANGE
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
-      BillingMode: PAY_PER_REQUEST  
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       TableName: !FindInMap [ResourcesName, !Ref MyEnvironment, tableName]
         
 Outputs:

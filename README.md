@@ -69,6 +69,8 @@ This project contains the buildspec and also it has configuration for safe deplo
         - https://github.com/mavi888/sam-test-basic-project
     - stream & lambda:
         - https://github.com/aws/aws-sam-cli/issues/974
+        - https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Streams.Lambda.Tutorial.html#Streams.Lambda.Tutorial.CreateRole
+        
 
 - code-pipeline
     - https://github.com/stelligent/devops-essentials
