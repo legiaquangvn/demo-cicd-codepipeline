@@ -180,8 +180,7 @@ Resources:
           NewVersion: !Ref HelloWorld.Version
 
   MyDynamoDBTable:
-    Type: "AWS::DynamoDB::Table"    
-    BillingMode: PAY_PER_REQUEST
+    Type: "AWS::DynamoDB::Table"        
     Properties:
       AttributeDefinitions:
         - AttributeName: PartitionKey
@@ -200,6 +199,7 @@ Resources:
         WriteCapacityUnits: 1
       StreamSpecification:
         StreamViewType: NEW_AND_OLD_IMAGES
+      BillingMode: PAY_PER_REQUEST  
       TableName: !FindInMap [ResourcesName, !Ref MyEnvironment, tableName]
         
 Outputs:

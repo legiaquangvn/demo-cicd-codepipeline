@@ -118,7 +118,7 @@ Resources:
           Type: LINUX_CONTAINER
           ComputeType: !Ref BuildComputeType
           Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
-        ServiceRole: !GetAtt CodeBuildServiceRole.Arn  
+        ServiceRole: !GetAtt CodeBuildServiceRole.Arn
         Source:
           Type: CODEPIPELINE
           BuildSpec: !Sub |
