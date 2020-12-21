@@ -5,6 +5,7 @@ const db = new DynamoDB.DocumentClient();
 const TableName = process.env.TABLE_NAME;
 
 const saveRequest = async (pk, sk) => {
+    console.log("dynamodb.saveRequest: TableName:", TableName);
     const item = {
         PartitionKey: pk,
         SortKey: sk
@@ -19,6 +20,7 @@ const saveRequest = async (pk, sk) => {
 }
 
 const saveCount = async (count) => {
+    console.log("dynamodb.saveCount: TableName:", TableName);
     const item = {
         PartitionKey: 'Count',
         SortKey: 'Current',
@@ -34,6 +36,7 @@ const saveCount = async (count) => {
 }
 
 const getCount = () => {
+    console.log("dynamodb.getCount: TableName:", TableName);
 	const params = {
 		Key: {
             PartitionKey: 'Count',
